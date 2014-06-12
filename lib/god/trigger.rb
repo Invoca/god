@@ -19,8 +19,10 @@ module God
 
     def self.deregister(condition)
       @mutex.synchronize do
-        self.triggers[condition.watch.name].delete(condition)
-        self.triggers.delete(condition.watch.name) if self.triggers[condition.watch.name].empty?
+        if self.triggers[condition.watch.name]
+          self.triggers[condition.watch.name].delete(condition)
+          self.triggers.delete(condition.watch.name) if self.triggers[condition.watch.name].empty?
+        end
       end
     end
 
