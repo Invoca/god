@@ -67,12 +67,11 @@ module God
       end
     end
 
-    def wait(timeout=nil)
+    def wait(timeout = nil)
       @monitor.synchronize do
-        unless @done
-          if timeout && !@done_condition.wait(timeout)
-            raise WaitTimeout
-          end
+        if !@done && timeout
+          @done_condition.wait(timeout)
+          @done or raise WaitTimeout
         end
       end
     end
