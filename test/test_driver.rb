@@ -33,13 +33,13 @@ class TestDriver < Test::Unit::TestCase
       event.done
     end
 
-    event.wait(0.1)
+    event.wait(1)
   end
 
   def test_timeouts
     event = God::TimedEvent.new(0)
     event.wait(0.1)
-    flunk
+    flunk "Did not throw an exception"
   rescue WaitTimeout
     # Pass
   end
