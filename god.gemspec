@@ -23,6 +23,10 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.extra_rdoc_files = %w[README.md]
 
+  s.add_dependency('redcarpet', '< 3.0.0')
+  s.add_dependency('sanitize',    '2.0.3')
+  s.add_dependency('statsd-ruby', '~> 1.2.1')
+
   s.add_development_dependency('json', '~> 1.6')
   s.add_development_dependency('rake')
   s.add_development_dependency('rdoc', '~> 3.10')
