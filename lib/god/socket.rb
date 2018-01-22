@@ -78,7 +78,6 @@ module God
         applog(nil, :info, "Started on #{DRb.uri}")
       rescue Errno::EADDRINUSE
         applog(nil, :info, "Socket already in use")
-        DRb.start_service
         server = DRbObject.new(nil, self.socket)
 
         begin
@@ -95,8 +94,15 @@ module God
       end
 
       if File.exists?(self.socket_file)
-        uid = Etc.getpwnam(@user).uid if @user
-        gid = Etc.getgrnam(@group).gid if @group
+        if @user
+          user_method = @user.is_a?(Integer) ? :getpwuid : :getpwnam
+          uid = Etc.send(user_method, @user).uid
+          gid = Etc.send(user_method, @user).gid
+        end
+        if @group
+          group_method = @group.is_a?(Integer) ? :getgrgid : :getgrnam
+          gid = Etc.send(group_method, @group).gid
+        end
 
         File.chmod(Integer(@perm), socket_file) if @perm
         File.chown(uid, gid, socket_file) if uid or gid

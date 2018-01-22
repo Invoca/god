@@ -1,10 +1,11 @@
 require File.dirname(__FILE__) + '/helper'
 
-class TestSlack < Test::Unit::TestCase
+class TestSlack < Minitest::Test
   def setup
     @slack = God::Contacts::Slack.new
-    @slack.account = "foo"
-    @slack.token = "foo"
+
+    # new slack webhook url contains three random 'tokens' with length of 9, 9 and 24 characters
+    @slack.url = "https://hooks.slack.com/services/ABCABCABC/DEFDEFDEF/ABCDEFABCDEFABCDEFABCDEF"
 
     @sample_data = {
       :message => "a sample message",
@@ -16,7 +17,7 @@ class TestSlack < Test::Unit::TestCase
   end
 
   def test_api_url
-    assert_equal "https://foo.slack.com/services/hooks/incoming-webhook?token=foo&channel=#general", @slack.api_url.to_s
+    assert_equal @slack.url, @slack.api_url.to_s
   end
 
   def test_notify

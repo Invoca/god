@@ -30,9 +30,15 @@ module God
     def file_writable?(file)
       pid = fork do
         begin
-          uid_num = Etc.getpwnam(self.uid).uid if self.uid
-          gid_num = Etc.getgrnam(self.gid).gid if self.gid
-          gid_num = Etc.getpwnam(self.uid).gid if self.gid.nil? && self.uid
+          if self.uid
+            user_method = self.uid.is_a?(Integer) ? :getpwuid : :getpwnam
+            uid_num = Etc.send(user_method, self.uid).uid
+            gid_num = Etc.send(user_method, self.uid).gid
+          end
+          if self.gid
+            group_method = self.gid.is_a?(Integer) ? :getgrgid : :getgrnam
+            gid_num = Etc.send(group_method, self.gid).gid
+          end
 
           ::Dir.chroot(self.chroot) if self.chroot
           ::Process.groups = [gid_num] if gid_num
@@ -43,7 +49,7 @@ module God
           exit(1)
         end
 
-        File.writable?(file_in_chroot(file)) ? exit(0) : exit(1)
+        File.writable?(file_in_chroot(file)) ? exit!(0) : exit!(1)
       end
 
       wpid, status = ::Process.waitpid2(pid)
