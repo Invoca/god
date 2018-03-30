@@ -19,7 +19,7 @@ module God
 
     class Slack < Contact
       class << self
-        attr_accessor :account, :token, :channel, :notify_channel, :format
+        attr_accessor :url, :channel, :notify_channel, :format, :username, :emoji
       end
 
       self.channel        = "#general"
@@ -28,12 +28,11 @@ module God
 
       def valid?
         valid = true
-        valid &= complain("Attribute 'account' must be specified", self) unless arg(:account)
-        valid &= complain("Attribute 'token' must be specified", self) unless arg(:token)
+        valid &= complain("Attribute 'url' must be specified", self) unless arg(:url)
         valid
       end
 
-      attr_accessor :account, :token, :channel, :notify_channel, :format
+      attr_accessor :url, :channel, :notify_channel, :format, :username, :emoji
 
       def text(data)
         text = ""
@@ -63,7 +62,7 @@ module God
       end
 
       def api_url
-        URI.parse("https://#{arg(:account)}.slack.com/services/hooks/incoming-webhook?token=#{arg(:token)}&channel=#{arg(:channel)}")
+        URI.parse arg(:url)
       end
 
       def request(text)
@@ -71,7 +70,14 @@ module God
         http.use_ssl = true
 
         req = Net::HTTP::Post.new(api_url.request_uri)
-        req.body = { :text => text }.to_json
+        req.body = {
+          :link_names => 1,
+          :text => text,
+          :channel => arg(:channel)
+        }.tap { |payload|
+          payload[:username] = arg(:username) if arg(:username)
+          payload[:icon_emoji] = arg(:emoji) if arg(:emoji)
+        }.to_json
 
         res = http.request(req)
 
@@ -90,4 +96,3 @@ module God
 
   end
 end
-
