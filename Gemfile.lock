@@ -128,4 +128,4 @@ DEPENDENCIES
   xmpp4r (~> 0.5)
 
 BUNDLED WITH
-   1.16.1
+   2.2.29
