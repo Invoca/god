@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: god
+  title: god
+  description: "Ruby process monitor"
+  tags:
+    - ruby
+  annotations:
+    backstage.io/source-location: url:https://github.com/Invoca/god/
+    github.com/project-slug: Invoca/god
+    buildkite.com/project-slug: invoca/god
+spec:
+  type: service
+  lifecycle: production
+  owner: TODO-add-owner
+  # system: TODO — see https://github.com/Invoca/backstage-catalog
